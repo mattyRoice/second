@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Servlet Project</title>
+<link rel="stylesheet" href="/web3/css/header.css">
+<link rel="stylesheet" href="/web3/css/footer.css">
+<link rel="stylesheet" href="/web3/css/main_index.css">
+</head>
+<body>
+	<header>
+		<div id="login_area">
+			<form action="/web3/member/login" method="POST">
+				<input type="text" name="id" placeholder="아이디">
+				<input type="password" name="pw" placeholder="비밀번호">
+				<button type="button">로그인</button>
+				
+			</form>
+		</div>
+		<div id="join_area">
+			<button type="button">회원가입</button>
+		</div>
+	</header>
+	
+	<main>		
+		<div id="notice_title">
+			<h2>공지사항</h2>
+			<a href="/project2/notice/list.html"> [ 더보기 ] </a>
+		</div>
+		
+		<!-- <div id="notice_list">공지사항이 없습니다.</div> -->
+		<div id="notice_list">
+		</div>
+	</main>
+	
+	<footer>메가스터디 IT 아카데미 웹개발 취업반 Servlet 프로젝트</footer>
+	
+	<script src="/web3/js/jquery-3.6.0.min.js"></script>
+	<script type="text/javascript">
+		$("#join_area > button").on("click", function() {
+			location.href = "/web3/member/join.html"
+		});
+		
+		$("#login_area > form > button").on("click", function(e) {
+			e.preventDefault();
+			
+			let $id = $("input[name=id]");
+			let $pw = $("input[name=pw]");
+			
+			let id = $id.val();
+			let pw = $pw.val();
+			
+			$.ajax({
+				url: "/web3/member/login",
+				type: "POST",
+				data: "id=" + id +"&pw=" + pw,
+				
+				success: function(loginUserName) {
+					// 로그인에 성공했을 때
+					// 로그인한 사용자의 이름 출력
+					$("#login_area").text(loginUserName + "님 환영합니다!");
+					
+					$("#join_area #logout").on("click", function () {
+						location.href ="/web3/member/logout";
+					});
+					
+				},
+				error: function() {
+					// 로그인에 실패했을 때
+					// 서버에 문제가 생겼을 때
+					
+					// 아무것도 하지 않음
+					alert("로그인 실패! 알 수 없음");
+					
+				}	
+			});
+		});
+		
+		$.ajax ({
+			url: "/web3/notice/list",
+			type: "GET",
+			dataType: "json",
+			success: function(result) {
+				// 서버가 전달해준 공지사항 목록의 제목과 내용들을 console.log를 사용해 모두 출력하세요
+				
+				let noticeList = result.noticeList
+				
+				for(let i=0; i<noticeList.length; i++){
+				console.log(noticeList[i]);
+				
+				let noticeTag = "<div class=\"contents\">" +
+										"<a href=\"\">" +
+											"<span class =\"title\">" + noticeList["title"] + "</span>"
+										"</a>" +
+								"</div>";
+				$("#notice_list").append(noticeTag);
+			}						
+							
+				console.log(noticeList);
+			},
+			error: function(response) {
+			
+				console.log("에러 포착!");
+				console.log(response);
+			}
+		});
+	</script>
+	
+</body>
+</html>
